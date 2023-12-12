@@ -3,6 +3,7 @@
 """Logging configuration for vLLM."""
 import logging
 import sys
+from logging.handlers import TimedRotatingFileHandler
 
 _FORMAT = "%(levelname)s %(asctime)s %(filename)s:%(lineno)d] %(message)s"
 _DATE_FORMAT = "%m-%d %H:%M:%S"
@@ -34,6 +35,10 @@ def _setup_logger():
         _default_handler.flush = sys.stdout.flush  # type: ignore
         _default_handler.setLevel(logging.INFO)
         _root_logger.addHandler(_default_handler)
+        _logfile_handler = TimedRotatingFileHandler('/data/logback/ymcas-vllm/vllm.log', when='D', interval=1,
+                                 backupCount=2, encoding=None, delay=False, utc=False, atTime=None)
+        _root_logger.addHandler(_logfile_handler)
+
     fmt = NewLineFormatter(_FORMAT, datefmt=_DATE_FORMAT)
     _default_handler.setFormatter(fmt)
     # Setting this will avoid the message
